@@ -29,6 +29,10 @@ export const postsService = {
     } = {},
   ) {
     try {
+      if (!db) {
+        throw new Error("Firebase not initialized")
+      }
+      
       let q = query(collection(db, "posts"), orderBy("createdAt", "desc"))
 
       if (filters.status) {
@@ -81,6 +85,10 @@ export const postsService = {
   // Get single post
   async getPost(slug: string) {
     try {
+      if (!db) {
+        throw new Error("Firebase not initialized")
+      }
+      
       const q = query(collection(db, "posts"), where("slug", "==", slug))
       const querySnapshot = await getDocs(q)
 
@@ -103,6 +111,7 @@ export const postsService = {
 
       return { data: post, error: null }
     } catch (error: any) {
+      toast.error(error.message)
       return { data: null, error }
     }
   },
@@ -110,6 +119,9 @@ export const postsService = {
   // Create post
   async createPost(post: Omit<Post, "id" | "createdAt" | "updatedAt" | "views" | "likes">) {
     try {
+      if (!db) {
+        throw new Error("Firebase not initialized")
+      }
       const docRef = await addDoc(collection(db, "posts"), {
         ...post,
         views: 0,
@@ -129,6 +141,9 @@ export const postsService = {
   // Update post
   async updatePost(id: string, updates: Partial<Post>) {
     try {
+      if (!db) {
+        throw new Error("Firebase not initialized")
+      }
       await updateDoc(doc(db, "posts", id), {
         ...updates,
         updatedAt: Timestamp.now(),
@@ -145,6 +160,9 @@ export const postsService = {
   // Delete post
   async deletePost(id: string) {
     try {
+      if (!db) {
+        throw new Error("Firebase not initialized")
+      }
       await deleteDoc(doc(db, "posts", id))
       toast.success("Post deleted successfully!")
       return { error: null }
@@ -157,6 +175,9 @@ export const postsService = {
   // Like post
   async likePost(postId: string, userId: string) {
     try {
+      if (!db) {
+        throw new Error("Firebase not initialized")
+      }
       // Check if user already liked the post
       const likeQuery = query(collection(db, "postLikes"), where("postId", "==", postId), where("userId", "==", userId))
       const likeSnapshot = await getDocs(likeQuery)

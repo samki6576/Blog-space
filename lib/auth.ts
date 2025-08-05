@@ -13,6 +13,10 @@ export const authService = {
   // Sign up
   async signUp(email: string, password: string, fullName: string) {
     try {
+      if (!auth || !db) {
+        throw new Error("Firebase not initialized")
+      }
+      
       const { user } = await createUserWithEmailAndPassword(auth, email, password)
 
       // Update the user's display name
@@ -41,6 +45,10 @@ export const authService = {
   // Sign in
   async signIn(email: string, password: string) {
     try {
+      if (!auth) {
+        throw new Error("Firebase not initialized")
+      }
+      
       const { user } = await signInWithEmailAndPassword(auth, email, password)
       toast.success("Signed in successfully!")
       return { user, error: null }
@@ -53,6 +61,10 @@ export const authService = {
   // Sign out
   async signOut() {
     try {
+      if (!auth) {
+        throw new Error("Firebase not initialized")
+      }
+      
       await firebaseSignOut(auth)
       toast.success("Signed out successfully!")
       return { error: null }
@@ -65,6 +77,10 @@ export const authService = {
   // Get current user profile
   async getCurrentUserProfile(user: User) {
     try {
+      if (!db) {
+        throw new Error("Firebase not initialized")
+      }
+      
       const userDoc = await getDoc(doc(db, "users", user.uid))
       if (userDoc.exists()) {
         return { profile: userDoc.data(), error: null }
@@ -78,6 +94,10 @@ export const authService = {
   // Update profile
   async updateProfile(userId: string, updates: any) {
     try {
+      if (!db) {
+        throw new Error("Firebase not initialized")
+      }
+      
       await updateDoc(doc(db, "users", userId), {
         ...updates,
         updatedAt: new Date(),

@@ -12,18 +12,22 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 }
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig)
+// Initialize Firebase only on client side
+let app: any = null
+let auth: any = null
+let db: any = null
+let storage: any = null
 
-// Initialize Firebase Authentication and get a reference to the service
-export const auth = getAuth(app)
+if (typeof window !== 'undefined') {
+  // Only initialize on client side
+  app = initializeApp(firebaseConfig)
+  auth = getAuth(app)
+  db = getFirestore(app)
+  storage = getStorage(app)
+}
 
-// Initialize Cloud Firestore and get a reference to the service
-export const db = getFirestore(app)
-
-// Initialize Cloud Storage and get a reference to the service
-export const storage = getStorage(app)
-
+// Export with fallbacks for server-side rendering
+export { auth, db, storage }
 export default app
 
 // Database types

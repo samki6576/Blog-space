@@ -24,6 +24,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    // Only run auth state listener if Firebase is available
+    if (!auth) {
+      setLoading(false)
+      return
+    }
+
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setUser(user)
 
@@ -42,19 +48,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const signIn = async (email: string, password: string) => {
+    if (!auth) return { error: "Firebase not initialized" }
     return authService.signIn(email, password)
   }
 
   const signUp = async (email: string, password: string, fullName: string) => {
+    if (!auth) return { error: "Firebase not initialized" }
     return authService.signUp(email, password, fullName)
   }
 
   const signOut = async () => {
+    if (!auth) return { error: "Firebase not initialized" }
     return authService.signOut()
   }
 
   const updateProfile = async (updates: any) => {
     if (!user) return { error: "No user" }
+    if (!auth) return { error: "Firebase not initialized" }
 
     const result = await authService.updateProfile(user.uid, updates)
     if (!result.error) {

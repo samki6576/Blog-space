@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -26,7 +26,7 @@ import {
 import Image from "next/image"
 import Link from "next/link"
 import { useParams } from "next/navigation"
-import { useAuth } from "@/components/auth/auth-provider"
+
 
 // Mock blog post data
 const blogPost = {
@@ -146,11 +146,23 @@ const relatedPosts = [
 
 export default function BlogPostPage() {
   const params = useParams()
-  const { user } = useAuth()
   const [post, setPost] = useState(blogPost)
   const [newComment, setNewComment] = useState("")
   const [isSubmittingComment, setIsSubmittingComment] = useState(false)
   const [showShareMenu, setShowShareMenu] = useState(false)
+  const [user, setUser] = useState<any>(null)
+
+  // Only use auth on client side
+  useEffect(() => {
+    try {
+      const { useAuth } = require("@/components/auth/auth-provider")
+      const { user: authUser } = useAuth()
+      setUser(authUser)
+    } catch (error) {
+      // Auth not available during build
+      console.log("Auth not available during build")
+    }
+  }, [])
 
   const handleLike = () => {
     setPost((prev) => ({

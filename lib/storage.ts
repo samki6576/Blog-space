@@ -6,6 +6,10 @@ export const storageService = {
   // Test function to check Firebase Storage configuration
   async testStorageConnection() {
     try {
+      if (!storage) {
+        throw new Error("Firebase Storage not initialized");
+      }
+      
       console.log("Testing Firebase Storage connection...");
       console.log("Storage object:", storage);
       console.log("Storage app:", storage.app);
@@ -19,6 +23,10 @@ export const storageService = {
 
   async uploadImage(file: File, folder = "images") {
     try {
+      if (!storage) {
+        throw new Error("Firebase Storage not initialized");
+      }
+      
       console.log("Starting image upload...");
       console.log("File:", file.name, file.size, file.type);
       console.log("Storage bucket:", storage.app.options.storageBucket);
@@ -64,6 +72,10 @@ export const storageService = {
 
   async deleteImage(path: string) {
     try {
+      if (!storage) {
+        throw new Error("Firebase Storage not initialized");
+      }
+      
       const imageRef = ref(storage, path);
       await deleteObject(imageRef);
       return { error: null };
