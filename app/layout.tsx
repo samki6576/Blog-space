@@ -5,6 +5,7 @@ import "./globals.css"
 import { AuthProvider } from "@/components/auth/auth-provider"
 import { Header } from "@/components/layout/header"
 import { Toaster } from "react-hot-toast"
+import { ErrorBoundary } from "@/components/error-boundary"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -22,11 +23,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <AuthProvider>
-          <Header />
-          <main>{children}</main>
-          <Toaster position="top-right" />
-        </AuthProvider>
+        <ErrorBoundary>
+          <AuthProvider>
+            <Header />
+            <main>{children}</main>
+            <Toaster position="top-right" />
+          </AuthProvider>
+        </ErrorBoundary>
       </body>
     </html>
   )
