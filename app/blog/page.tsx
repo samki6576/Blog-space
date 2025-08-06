@@ -18,7 +18,7 @@ const blogPosts = [
     date: "2024-01-15",
     readTime: "5 min read",
     category: "Technology",
-    image: "/placeholder.svg?height=300&width=400",
+    image: "https://images.unsplash.com/photo-1496065187959-7f07b8353c55",
     tags: ["Web Development", "AI", "Trends"],
   },
   {
@@ -30,7 +30,7 @@ const blogPosts = [
     date: "2024-01-12",
     readTime: "8 min read",
     category: "Development",
-    image: "/placeholder.svg?height=300&width=400",
+    image: "https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7",
     tags: ["Architecture", "Scalability", "Cloud"],
   },
   {
@@ -42,7 +42,7 @@ const blogPosts = [
     date: "2024-01-10",
     readTime: "6 min read",
     category: "Design",
-    image: "/placeholder.svg?height=300&width=400",
+    image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa",
     tags: ["UX", "Design", "User Research"],
   },
   {
@@ -54,7 +54,7 @@ const blogPosts = [
     date: "2024-01-08",
     readTime: "4 min read",
     category: "Programming",
-    image: "/placeholder.svg?height=300&width=400",
+    image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e",
     tags: ["TypeScript", "JavaScript", "Programming"],
   },
   {
@@ -65,7 +65,7 @@ const blogPosts = [
     date: "2024-01-05",
     readTime: "7 min read",
     category: "CSS",
-    image: "/placeholder.svg?height=300&width=400",
+    image: "https://images.unsplash.com/photo-1562408590-e32931084e23",
     tags: ["CSS", "Layout", "Frontend"],
   },
   {
@@ -76,7 +76,7 @@ const blogPosts = [
     date: "2024-01-03",
     readTime: "10 min read",
     category: "Database",
-    image: "/placeholder.svg?height=300&width=400",
+    image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085",
     tags: ["Database", "Performance", "Optimization"],
   },
 ]
@@ -87,46 +87,7 @@ export default function BlogPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       {/* Header */}
-      <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">B</span>
-              </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                BlogSpace
-              </span>
-            </Link>
-
-            <nav className="hidden md:flex items-center space-x-8">
-              <Link href="/" className="text-gray-700 hover:text-blue-600 transition-colors">
-                Home
-              </Link>
-              <Link href="/blog" className="text-blue-600 font-semibold">
-                Blog
-              </Link>
-              <Link href="/categories" className="text-gray-700 hover:text-blue-600 transition-colors">
-                Categories
-              </Link>
-              <Link href="/about" className="text-gray-700 hover:text-blue-600 transition-colors">
-                About
-              </Link>
-            </nav>
-
-            <div className="flex items-center space-x-4">
-              <Button variant="ghost" size="sm">
-                <Search className="w-4 h-4" />
-              </Button>
-              <Link href="/auth/login">
-                <Button variant="outline" size="sm">
-                  Login
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </header>
+     
 
       {/* Hero Section */}
       <section className="py-16 px-4">
