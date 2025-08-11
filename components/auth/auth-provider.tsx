@@ -1,6 +1,5 @@
 "use client"
 
-import type React from "react"
 import { createContext, useContext, useEffect, useState } from "react"
 import { onAuthStateChanged, type User } from "firebase/auth"
 import { auth } from "@/lib/firebase"
@@ -10,6 +9,7 @@ interface AuthContextType {
   user: User | null
   profile: any
   loading: boolean
+  error: Error | null
   signIn: (email: string, password: string) => Promise<any>
   signUp: (email: string, password: string, fullName: string) => Promise<any>
   signOut: () => Promise<any>
@@ -22,53 +22,96 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [profile, setProfile] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<Error | null>(null)
 
   useEffect(() => {
-    // Only run auth state listener if Firebase is available
+    // Early return if Firebase auth isn't initialized
     if (!auth) {
+      setError(new Error("Firebase auth not initialized"))
       setLoading(false)
       return
     }
 
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      setUser(user)
+    let unsubscribe: () => void
 
-      if (user) {
-        // Get user profile from Firestore
-        const { profile } = await authService.getCurrentUserProfile(user)
-        setProfile(profile)
-      } else {
-        setProfile(null)
-      }
-
+    try {
+      unsubscribe = onAuthStateChanged(auth, async (user) => {
+        try {
+          setUser(user)
+          
+          if (user) {
+            const result = await authService.getCurrentUserProfile(user)
+            if (result.error) {
+              throw new Error(result.error)
+            }
+            setProfile(result.profile)
+          } else {
+            setProfile(null)
+          }
+        } catch (err) {
+          setError(err instanceof Error ? err : new Error("Failed to load profile"))
+        } finally {
+          setLoading(false)
+        }
+      })
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error("Auth state change error"))
       setLoading(false)
-    })
+    }
 
-    return () => unsubscribe()
+    return () => {
+      if (unsubscribe) unsubscribe()
+    }
   }, [])
 
-  const signIn = async (email: string, password: string) => {
-    if (!auth) return { error: "Firebase not initialized" }
-    return authService.signIn(email, password)
+  const handleAuthOperation = async (
+    operation: () => Promise<any>,
+    errorMessage: string
+  ) => {
+    if (!auth) {
+      return { error: "Firebase not initialized" }
+    }
+
+    try {
+      setLoading(true)
+      setError(null)
+      return await operation()
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error(errorMessage)
+      setError(error)
+      return { error: error.message }
+    } finally {
+      setLoading(false)
+    }
   }
 
-  const signUp = async (email: string, password: string, fullName: string) => {
-    if (!auth) return { error: "Firebase not initialized" }
-    return authService.signUp(email, password, fullName)
-  }
+  const signIn = (email: string, password: string) => 
+    handleAuthOperation(
+      () => authService.signIn(email, password),
+      "Sign in failed"
+    )
 
-  const signOut = async () => {
-    if (!auth) return { error: "Firebase not initialized" }
-    return authService.signOut()
-  }
+  const signUp = (email: string, password: string, fullName: string) => 
+    handleAuthOperation(
+      () => authService.signUp(email, password, fullName),
+      "Sign up failed"
+    )
+
+  const signOut = () => 
+    handleAuthOperation(
+      () => authService.signOut(),
+      "Sign out failed"
+    )
 
   const updateProfile = async (updates: any) => {
     if (!user) return { error: "No user" }
-    if (!auth) return { error: "Firebase not initialized" }
 
-    const result = await authService.updateProfile(user.uid, updates)
+    const result = await handleAuthOperation(
+      () => authService.updateProfile(user.uid, updates),
+      "Profile update failed"
+    )
+
     if (!result.error) {
-      // Update local profile state
       setProfile((prev: any) => ({ ...prev, ...updates }))
     }
     return result
@@ -78,6 +121,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     user,
     profile,
     loading,
+    error,
     signIn,
     signUp,
     signOut,
