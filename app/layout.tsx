@@ -17,23 +17,34 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       { url: "/r.png", sizes: "32x32" },
-      { url: "/r.png", type: "image/png", sizes: "192x192" },
-      { url: "/r.png", type: "image/png", sizes: "512x512" },
+      { url: "/r.png", sizes: "192x192" },
+      { url: "/r.png", sizes: "512x512" },
     ],
-    apple: [
-      { url: "/r.png", type: "image/png", sizes: "180x180" },
-    ],
+    apple: [{ url: "/r.png", sizes: "180x180" }],
   },
-};
+  manifest: "/manifest.json",
 
+  openGraph: {
+    title: "BlogSpace - Complete Blog Platform",
+    description: "A complete, feature-rich blog platform built with Next.js and Supabase",
+    url: "https://yourdomain.com",
+    siteName: "BlogSpace",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "BlogSpace - Complete Blog Platform",
+    description: "A complete, feature-rich blog platform built with Next.js and Supabase",
+    images: ["/og-image.png"],
+    creator: "@yourhandle",
+  },
+}
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <ErrorBoundary>
           <AuthProvider>
